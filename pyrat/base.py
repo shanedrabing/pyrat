@@ -16,6 +16,11 @@ __all__ = [
 
     # functions
     "c",
+    "gextr",
+    "gextrall",
+    "grep",
+    "grepl",
+    "gsub",
     "identical",
     "ifelse",
     "isiter",
@@ -33,24 +38,21 @@ __all__ = [
     "unique",
     "vector",
     "which",
-    "grepl",
-    "grep",
-    "gsub",
 ]
 
 
 # IMPORTS
 
 
-import re
 import concurrent.futures
 import dataclasses
 import functools
 import itertools
 import math
 import operator as op
+import re
 
-from pyrat.closure import get, inv, nest, part, catch
+from pyrat.closure import catch, get, inv, nest, part
 
 
 # NA CLASS
@@ -266,6 +268,18 @@ def gsub(pattern, repl, x, count=None):
     if count:
         return x.apply(lambda s: pattern.sub(repl, s, count))
     return x.apply(lambda s: pattern.sub(repl, s))
+
+
+def gextr(pattern, x):
+    if not isinstance(pattern, re.Pattern):
+        pattern = re.compile(pattern)
+    return x.pipe(pattern.search, catch(re.Match.group, TypeError, NA))
+
+
+def gextrall(pattern, x):
+    if not isinstance(pattern, re.Pattern):
+        pattern = re.compile(pattern)
+    return x.pipe(pattern.findall, c)
 
 
 # FUNCTIONS (VECTOR LOADING)

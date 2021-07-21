@@ -302,3 +302,14 @@ if __name__ == "__main__":
     assert_error(gsub, TypeError)
     assert_identical(gsub(ptrn, "", vstr), c("python", " rt", "pirte"))
     assert_identical(gsub(ptrn, "", vstr, 1), c("python", " rat", "pirte"))
+
+    # gextr
+    assert_error(gextr, TypeError)
+    assert_identical(gextr(ptrn, vstr), c(NA, "a", "a"))
+
+    # gextrall
+    assert_error(gextrall, TypeError)
+    assert_identical(
+        gextrall(ptrn, vstr),
+        vector((c(), rep("a", 2), c("a")))
+    )
