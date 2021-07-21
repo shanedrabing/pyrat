@@ -21,8 +21,14 @@ __all__ = [
     "vector",
     "paste",
     "ifelse",
+    "match",
 ]
 
+"which",
+"unique",
+
+"mean",
+"sqrt",
 
 # IMPORTS
 
@@ -34,7 +40,7 @@ import itertools
 import math
 import operator as op
 
-from pyrat.closure import get, inv, nest, part
+from pyrat.closure import get, inv, nest, part, catch
 
 
 # FUNCTIONS (GENERAL)
@@ -135,13 +141,18 @@ def seq(start, end=None, step=1, length_out=None):
     if end is None:
         end = start
         start = 1
+    flip = end < start
+    if flip:
+        start, end = end, start
+        
     rng = (end - start)
     if length_out is None:
         nsteps = rng / step
         length_out = math.ceil(nsteps) + (nsteps == int(nsteps))
     else:
         step = (rng / (length_out - 1))
-    return vector(start + (step * i) for i in range(length_out))
+    vec = vector(start + (step * i) for i in range(length_out))
+    return vec[::-1] if flip else vec
 
 
 def sort(itr, key=None, reverse=False):
@@ -171,6 +182,14 @@ def paste(*args, sep=" ", collapse=None):
 
 def ifelse(test, yes, no):
     return vector(map(_ifelse_singular, test, _repeat(yes), _repeat(no)))
+
+
+def match(itr, target):
+    if not isinstance(itr, vector):
+        itr = c(itr)
+    if not isinstance(target, vector):
+        target = c(target)
+    return vector(itr).apply(catch(target.index, ValueError, NA))
 
 
 # FUNCTIONS (VECTOR LOADING)

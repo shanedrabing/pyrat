@@ -222,6 +222,7 @@ if __name__ == "__main__":
     assert_identical(seq(0, 9), c(range(10)))
     assert_identical(seq(0, 1, 0.25), vec)
     assert_identical(seq(0, 1, length_out=5), vec)
+    assert_identical(seq(3, 1), c(3, 2, 1))
 
     # sort returns a sorted vector
     assert_error(sort, TypeError)
@@ -251,9 +252,13 @@ if __name__ == "__main__":
     assert_identical(ifelse(v123 > 1, v123, NA), c(NA, 2, 3))
     assert_identical(ifelse(v123 > 1, 1, 0), c(0, 1, 1))
 
-    "match",
-    "which",
-    "unique",
-
-    "mean",
-    "sqrt",
+    # match up a vector with an index,
+    # NA if not found in index
+    assert_error(match, TypeError)
+    assert_error(lambda: match(v123), TypeError)
+    assert_identical(match(v123, 0), rep(NA, 3))
+    assert_identical(match(v123, 1), c(0, NA, NA))
+    assert_identical(match(1, seq(3, 1)), c(2))
+    assert_identical(match(v12, v123), c(0, 1))
+    assert_identical(match(v123, v12), c(0, 1, NA))
+    assert_identical(match(c(1, 2, NA), c(1, NA)), c(0, NA, 1))
