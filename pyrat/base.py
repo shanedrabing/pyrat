@@ -8,9 +8,9 @@ __email__ = "shane.drabing@gmail.com"
 
 __all__ = [
     "c",
-    "flatten",
     "identical",
     "is_na",
+    "is_none",
     "isiter",
     "isnonstriter",
     "NA",
@@ -24,13 +24,14 @@ __all__ = [
 # IMPORTS
 
 
-import math
+import concurrent.futures
+import dataclasses
 import functools
 import itertools
+import math
 import operator as op
-import concurrent.futures
 
-from pyrat.closure import part, get, nest
+from pyrat.closure import get, inv, nest, part
 
 
 # FUNCTIONS (GENERAL)
@@ -42,6 +43,10 @@ def _identity(x):
 
 def _is_na_singular(x):
     return isinstance(x, _NA)
+
+
+def _is_none_singular(x):
+    return x is None
 
 
 def _consume_n(itr, n):
@@ -67,19 +72,21 @@ def isnonstriter(x):
 # FUNCTIONS (VECTOR MANIPULATION)
 
 
-def flatten(itr):
-    vec = vector(flatten(x) if isnonstriter(x) else (x,) for x in itr)
+def c(*itr):
+    vec = vector(c(*x) if isnonstriter(x) else (x,) for x in itr)
     return vector(vec.astype(tuple).reduce(tuple.__add__, tuple()))
-
-
-def c(*args):
-    return flatten(args)
 
 
 def is_na(x):
     if isinstance(x, vector):
         return x.apply(is_na)
     return _is_na_singular(x)
+
+
+def is_none(x):
+    if isinstance(x, vector):
+        return x.apply(is_none)
+    return _is_none_singular(x)
 
 
 def identical(x, y):
@@ -158,17 +165,12 @@ def _operate(f, flip=False, singular=False):
 # CLASSES
 
 
+@dataclasses.dataclass(frozen=True)
 class _NA:
     def __str__(self):
         return "NA"
-    
+
     __repr__ = __str__
-    
-    def __getattr__(self, *args):
-        pass
-    
-    def __setattr__(self, *args):
-        pass
 
 
 class vector(tuple):
@@ -212,24 +214,18 @@ class vector(tuple):
     def accumulate(self, f):
         return vector(itertools.accumulate(self, f))
 
-    def filter(self, f):
+    def filter(self, f, invert=False):
+        if invert:
+            return vector(filter(inv(f), self))
         return vector(filter(f, self))
-
-    def apply(self, f, *args):
-        return vector(map(f, self, *args))
-
-    def tapply(self, index, f):
-        rng = seq(0, len(self))
-        i = order(index)
-        return {
-            k: f(self[v])
-            for k, v in itertools.groupby(rng[i], index.__getitem__)
-        }
 
     def astype(self, t):
         if str(type(t)) != "<class 'type'>":
             raise Exception("use vector.apply for functions")
         return self.apply(t)
+
+    def apply(self, f, *args):
+        return vector(map(f, self, *args))
 
     def thread(self, f, *args):
         with concurrent.futures.ThreadPoolExecutor() as exe:
@@ -241,6 +237,22 @@ class vector(tuple):
         with concurrent.futures.ProcessPoolExecutor() as exe:
             return vector(exe.map(f, self, *args))
 
+    def tapply(self, index, f):
+        rng = seq(0, len(self))
+        i = order(index)
+        return {
+            k: f(self[v])
+            for k, v in itertools.groupby(rng[i], index.__getitem__)
+        }
+
+    def apply(self, f, *args):
+        return vector(map(f, self, *args))
+
+    def pipe(self, *fs):
+        x = self
+        for f in fs:
+            x = vector(map(f, x))
+        return x
 
 
 # CLASS INSTANCES (WEIRD)
