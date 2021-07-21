@@ -313,3 +313,14 @@ if __name__ == "__main__":
     assert_identical(mean(c(1, 2)), 1.5)
     assert_identical(mean(c(1, 2, NA)), NA)
     assert_identical(mean(c(1, 2, NA), na_rm=True), 1.5)
+
+    # rmin
+    assert_eq(rmin(), Inf)
+    assert_eq(rmin(1, c(NA, 2)), NA)
+    assert_eq(rmin(1, NA, 2, na_rm=True), 1)
+
+    # rmax
+    assert_eq(rmax(), -Inf)
+    assert_eq(rmax(1, c(NA, 2)), NA)
+    assert_eq(rmax(1, NA, 2, na_rm=True), 2)
+

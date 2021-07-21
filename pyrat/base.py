@@ -38,6 +38,8 @@ __all__ = [
     "unique",
     "vector",
     "which",
+    "rmin",
+    "rmax",
 ]
 
 
@@ -130,6 +132,28 @@ def sqrt(x):
     if not isinstance(x, vector):
         return math.sqrt(x)
     return x.apply(catch(math.sqrt, TypeError, NA))
+
+
+def rmin(*x, na_rm=False):
+    x = c(x)
+    if not x:
+        return Inf
+    if na_rm:
+        x = x[~is_na(x)]
+    elif any(is_na(x)):
+        return NA
+    return min(x)
+
+
+def rmax(*x, na_rm=False):
+    x = c(x)
+    if not x:
+        return -Inf
+    if na_rm:
+        x = x[~is_na(x)]
+    elif any(is_na(x)):
+        return NA
+    return max(x)
 
 
 def mean(x, na_rm=False):
