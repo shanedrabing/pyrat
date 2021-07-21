@@ -42,7 +42,6 @@ def _identity(x):
 
 def _is_na_singular(x):
     return isinstance(x, _NA)
-    return itr
 
 
 def _consume_n(itr, n):
@@ -54,6 +53,7 @@ def _repeat(x):
     itr = itertools.repeat(x)
     if isnonstriter(x):
         itr = itertools.chain.from_iterable(itr)
+    return itr
 
 
 def isiter(x):
