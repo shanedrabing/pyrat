@@ -50,11 +50,6 @@ def _is_none_singular(x):
     return x is None
 
 
-def _consume_n(itr, n):
-    itr = iter(itr)
-    return (next(itr) for _ in range(n))
-
-
 def _repeat(x):
     itr = itertools.repeat(x)
     if isnonstriter(x):
@@ -119,7 +114,7 @@ def rep(x=None, times=None, length_out=None, each=None):
     gen = map(part(itertools.repeat, each), itr)
     chn = itertools.chain.from_iterable(gen)
     cyc = itertools.cycle(chn)
-    return vector(_consume_n(cyc, length_out))
+    return vector(itertools.islice(cyc, length_out))
 
 
 def seq(start, end=None, step=1, length_out=None):
