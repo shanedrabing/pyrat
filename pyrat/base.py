@@ -9,14 +9,15 @@ __email__ = "shane.drabing@gmail.com"
 __all__ = [
     "c",
     "identical",
-    "is_na",
-    "is_none",
     "isiter",
+    "isna",
+    "isnone",
     "isnonstriter",
     "NA",
     "order",
     "rep",
     "seq",
+    "sort",
     "vector",
 ]
 
@@ -77,15 +78,15 @@ def c(*itr):
     return vector(vec.astype(tuple).reduce(tuple.__add__, tuple()))
 
 
-def is_na(x):
+def isna(x):
     if isinstance(x, vector):
-        return x.apply(is_na)
+        return x.apply(isna)
     return _is_na_singular(x)
 
 
-def is_none(x):
+def isnone(x):
     if isinstance(x, vector):
-        return x.apply(is_none)
+        return x.apply(isnone)
     return _is_none_singular(x)
 
 
@@ -134,7 +135,13 @@ def seq(start, end=None, step=1, length_out=None):
     return vector(start + (step * i) for i in range(length_out))
 
 
-def order(itr, key=None, reverse=False):
+def sort(itr, key=None, reverse=False):
+    return vector(sorted(itr, key=key, reverse=reverse))
+
+
+def order(itr=None, key=None, reverse=False):
+    if itr is None:
+        return
     if key is None:
         key = _identity
     srt = sorted(enumerate(itr), key=nest(get(1), key), reverse=reverse)

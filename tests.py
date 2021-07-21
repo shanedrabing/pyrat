@@ -140,6 +140,10 @@ if __name__ == "__main__":
     # tuple is immutable, must override __new__,
     # but cannot set attributes on tuples anyways
 
+    # ...some tuple methods...
+    assert_eq(v123.index(1), 0)
+    assert_eq(v123.count(1), 1)
+
     # ...and some cool methods
     assert_identical((v123 + 0.1).round(), v123)
     assert_identical(v123.reduce(operator.add), sum(v123))
@@ -187,20 +191,20 @@ if __name__ == "__main__":
     assert all(map(isnonstriter, (dict(), list(), set(), tuple())))
     assert none(map(isnonstriter, (bool(), complex(), float(), int(), str())))
 
-    # is_na is both singular and multiple,
+    # isna is both singular and multiple,
     # NA is not None
-    assert_error(is_na, TypeError)
-    assert_eq(is_na(NA), True)
-    assert_eq(is_na(None), False)
-    assert_identical(is_na(c(NA, None)), c(True, False))
+    assert_error(isna, TypeError)
+    assert_eq(isna(NA), True)
+    assert_eq(isna(None), False)
+    assert_identical(isna(c(NA, None)), c(True, False))
 
-    # is_none is both singular and multiple,
+    # isnone is both singular and multiple,
     # None is not NA,
     # this is a little different than is.null in R
-    assert_error(is_none, TypeError)
-    assert_eq(is_none(None), True)
-    assert_eq(is_none(NA), False)
-    assert_identical(is_none(c(None, NA)), c(True, False))
+    assert_error(isnone, TypeError)
+    assert_eq(isnone(None), True)
+    assert_eq(isnone(NA), False)
+    assert_identical(isnone(c(None, NA)), c(True, False))
 
     # rep can repeat a vector
     assert_is(rep(), None)
@@ -212,6 +216,18 @@ if __name__ == "__main__":
     assert_identical(rep(v12, each=2), c(1, 1, 2, 2))
     assert_identical(rep(v12, each=3, length_out=4), c(1, 1, 1, 2))
 
-    "order",
-    "rep",
-    "seq",
+    # seq is used for making ranges,
+    # it is inclusive, unlike Python's range
+    vec = c(0.00, 0.25, 0.50, 0.75, 1.00)
+    assert_identical(seq(0, 9), c(range(10)))
+    assert_identical(seq(0, 1, 0.25), vec)
+    assert_identical(seq(0, 1, length_out=5), vec)
+
+    # sort returns a sorted vector
+    assert_error(sort, TypeError)
+    assert_identical(sort(v213), v123)
+
+    # order returns the sorted indices based on the data
+    assert_is(order(), None)
+    assert_identical(order(v213), c(1, 0, 2))
+    assert_identical(v213[order(v213)], sort(v213))
