@@ -1,3 +1,26 @@
+__author__ = "Shane Drabing"
+__license__ = "MIT"
+__email__ = "shane.drabing@gmail.com"
+
+
+# MODULE EXPOSURE
+
+
+__all__ = [
+    "c",
+    "flatten",
+    "identical",
+    "is_na",
+    "isiter",
+    "isnonstriter",
+    "NA",
+    "order",
+    "rep",
+    "seq",
+    "vector",
+]
+
+
 # IMPORTS
 
 
@@ -19,6 +42,18 @@ def _identity(x):
 
 def _is_na_singular(x):
     return isinstance(x, _NA)
+    return itr
+
+
+def _consume_n(itr, n):
+    itr = iter(itr)
+    return (next(itr) for _ in range(n))
+
+
+def _repeat(x):
+    itr = itertools.repeat(x)
+    if isnonstriter(x):
+        itr = itertools.chain.from_iterable(itr)
 
 
 def isiter(x):
@@ -27,18 +62,6 @@ def isiter(x):
 
 def isnonstriter(x):
     return isiter(x) and not isinstance(x, str)
-
-
-def _repeat(x):
-    itr = itertools.repeat(x)
-    if isnonstriter(x):
-        itr = itertools.chain.from_iterable(itr)
-    return itr
-
-
-def _consume_n(itr, n):
-    itr = iter(itr)
-    return (next(itr) for _ in range(n))
 
 
 # FUNCTIONS (VECTOR MANIPULATION)

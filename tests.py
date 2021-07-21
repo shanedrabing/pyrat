@@ -1,3 +1,11 @@
+__author__ = "Shane Drabing"
+__license__ = "MIT"
+__email__ = "shane.drabing@gmail.com"
+
+
+# MODULE EXPOSURE
+
+
 __all__ = [
     "assert_eq",
     "assert_is",
