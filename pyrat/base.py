@@ -33,12 +33,16 @@ __all__ = [
     "unique",
     "vector",
     "which",
+    "grepl",
+    "grep",
+    "gsub",
 ]
 
 
 # IMPORTS
 
 
+import re
 import concurrent.futures
 import dataclasses
 import functools
@@ -243,6 +247,27 @@ def unique(itr):
     return vector(dict.fromkeys(itr))
 
 
+# FUNCTIONS (REGEX)
+
+
+def grepl(pattern, x):
+    if not isinstance(pattern, re.Pattern):
+        pattern = re.compile(pattern)
+    return ~isnone(x.apply(pattern.search))
+
+
+def grep(pattern, x):
+    return which(grepl(pattern, x))
+
+
+def gsub(pattern, repl, x, count=None):
+    if not isinstance(pattern, re.Pattern):
+        pattern = re.compile(pattern)
+    if count:
+        return x.apply(lambda s: pattern.sub(repl, s, count))
+    return x.apply(lambda s: pattern.sub(repl, s))
+
+
 # FUNCTIONS (VECTOR LOADING)
 
 
@@ -339,9 +364,6 @@ class vector(tuple):
             k: f(self[v])
             for k, v in itertools.groupby(rng[i], index.__getitem__)
         }
-
-    def apply(self, f, *args):
-        return vector(map(f, self, *args))
 
     def pipe(self, *fs):
         x = self

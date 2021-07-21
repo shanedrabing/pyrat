@@ -61,7 +61,6 @@ def none(x):
 
 
 if __name__ == "__main__":
-    import itertools
     import operator
 
     from pyrat.base import *
@@ -74,6 +73,8 @@ if __name__ == "__main__":
     v12 = c(1, 2)
     v123 = c(1, 2, 3)
     v213 = c(2, 1, 3)
+    ptrn = r"[Aa]"
+    vstr = c("python", "a rat", "pirate")
 
     # VECTOR TESTS
     
@@ -288,3 +289,16 @@ if __name__ == "__main__":
     assert_error(mean, TypeError)
     assert_identical(mean(c()), NA)
     assert_identical(mean(c(1, 2)), 1.5)
+
+    # grepl
+    assert_error(grepl, TypeError)
+    assert_identical(grepl(ptrn, vstr), c(False, True, True))
+
+    # grep
+    assert_error(grep, TypeError)
+    assert_identical(grep(ptrn, vstr), c(1, 2))
+
+    # gsub
+    assert_error(gsub, TypeError)
+    assert_identical(gsub(ptrn, "", vstr), c("python", " rt", "pirte"))
+    assert_identical(gsub(ptrn, "", vstr, 1), c("python", " rat", "pirte"))
