@@ -10,7 +10,7 @@ __all__ = [
 # IMPORTS
 
 
-from base import identical, vector
+from pyrat.base import identical, vector
 
 
 # FUNCTIONS
@@ -44,7 +44,7 @@ if __name__ == "__main__":
     import itertools
     import operator
 
-    from base import *
+    from pyrat.base import *
 
     # VARIABLES
 

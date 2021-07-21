@@ -7,7 +7,7 @@ import itertools
 import operator as op
 import concurrent.futures
 
-from closure import part, get, nest
+from pyrat.closure import part, get, nest
 
 
 # FUNCTIONS (GENERAL)
