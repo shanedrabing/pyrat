@@ -219,8 +219,11 @@ if __name__ == "__main__":
     # seq is used for making ranges,
     # it is inclusive, unlike Python's range
     vec = c(0.00, 0.25, 0.50, 0.75, 1.00)
+    assert_identical(seq(3), v123)
+    assert_identical(seq(0), c(1, 0))
     assert_identical(seq(0, 9), c(range(10)))
     assert_identical(seq(0, 1, 0.25), vec)
+    assert_identical(seq(1, 0, 0.25), vec[::-1])
     assert_identical(seq(0, 1, length_out=5), vec)
     assert_identical(seq(3, 1), c(3, 2, 1))
 
@@ -257,8 +260,15 @@ if __name__ == "__main__":
     assert_error(match, TypeError)
     assert_error(lambda: match(v123), TypeError)
     assert_identical(match(v123, 0), rep(NA, 3))
+    assert_identical(match(v123, 0, "hi"), rep("hi", 3))
     assert_identical(match(v123, 1), c(0, NA, NA))
     assert_identical(match(1, seq(3, 1)), c(2))
     assert_identical(match(v12, v123), c(0, 1))
     assert_identical(match(v123, v12), c(0, 1, NA))
     assert_identical(match(c(1, 2, NA), c(1, NA)), c(0, NA, 1))
+
+    # which gives the indices of True values
+    assert_error(which, TypeError)
+    assert_identical(which(True), c(0))
+    assert_identical(which(v123 > 1), c(1, 2))
+    assert_identical(which(c(True, NA, False, True)), c(0, 3))

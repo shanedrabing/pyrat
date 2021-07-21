@@ -22,10 +22,10 @@ __all__ = [
     "paste",
     "ifelse",
     "match",
+    "which",
+    "unique",
 ]
 
-"which",
-"unique",
 
 "mean",
 "sqrt",
@@ -41,6 +41,27 @@ import math
 import operator as op
 
 from pyrat.closure import get, inv, nest, part, catch
+
+
+# NA CLASS
+
+
+@dataclasses.dataclass(frozen=True)
+class _NA:
+    def __str__(self):
+        return "NA"
+
+    __repr__ = __str__
+    
+    def __bool__(self):
+        # for itertools.compress?
+        return False
+
+
+# CLASS INSTANCES (WEIRD)
+
+
+NA = _NA()
 
 
 # FUNCTIONS (GENERAL)
@@ -184,12 +205,18 @@ def ifelse(test, yes, no):
     return vector(map(_ifelse_singular, test, _repeat(yes), _repeat(no)))
 
 
-def match(itr, target):
-    if not isinstance(itr, vector):
-        itr = c(itr)
-    if not isinstance(target, vector):
-        target = c(target)
-    return vector(itr).apply(catch(target.index, ValueError, NA))
+def match(x, table, nomatch=NA):
+    if not isinstance(x, vector):
+        x = c(x)
+    if not isinstance(table, vector):
+        table = c(table)
+    return vector(x).apply(catch(table.index, ValueError, nomatch))
+
+
+def which(x):
+    if not isinstance(x, vector):
+        x = c(x)
+    return vector(itertools.compress(range(len(x)), x))
 
 
 # FUNCTIONS (VECTOR LOADING)
@@ -214,15 +241,7 @@ def _operate(f, flip=False, singular=False):
     return operatef
 
 
-# CLASSES
-
-
-@dataclasses.dataclass(frozen=True)
-class _NA:
-    def __str__(self):
-        return "NA"
-
-    __repr__ = __str__
+# VECTOR CLASS
 
 
 class vector(tuple):
@@ -305,12 +324,6 @@ class vector(tuple):
         for f in fs:
             x = vector(map(f, x))
         return x
-
-
-# CLASS INSTANCES (WEIRD)
-
-
-NA = _NA()
 
 
 # CLASS LOADING (VECTOR, MUST RUN)
