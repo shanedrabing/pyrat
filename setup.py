@@ -5,7 +5,7 @@ with open("README.md", "r") as f:
 
 setuptools.setup(
     name="pyrat",
-    version="0.1.0",
+    version="0.2.0",
     author="Shane Drabing",
     author_email="shane.drabing@gmail.com",
     packages=setuptools.find_packages(),
