@@ -103,7 +103,9 @@ def identical(x, y):
     return all(map(identical, x, y))
 
 
-def rep(x, times=None, length_out=None, each=None):
+def rep(x=None, times=None, length_out=None, each=None):
+    if x is None:
+        return
     if not isnonstriter(x):
         x = c(x)
     if each is None:

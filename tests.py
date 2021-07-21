@@ -31,6 +31,18 @@ def assert_eq(a, b):
     assert test, "%s != %s" % tuple(map(repr, (a, b)))
 
 
+def assert_is(a, b):
+    test = (a is b)
+    assert test, "%s is not %s" % tuple(map(repr, (a, b)))
+
+
+def assert_error(f, err):
+    try:
+        f()
+    except err:
+        pass
+
+
 def assert_identical(a, b):
     test = identical(a, b)
     assert test, "%s != %s" % tuple(map(repr, (a, b)))
@@ -65,6 +77,11 @@ if __name__ == "__main__":
 
     # VECTOR TESTS
     
+    # empty calls to identical
+    assert_error(lambda: identical(), TypeError)
+    assert_error(lambda: identical(None), TypeError)
+    assert identical(None, None)
+
     # identical ensures that tuples are truly the same
     assert_identical(t123, t123)
     assert_not_identical(t123, t12)
@@ -162,8 +179,17 @@ if __name__ == "__main__":
     assert_identical(c(), vector())
     assert_identical(c(1, c(2, 3)), c(1, 2, 3))
 
+    # isiter: is the object iterable?
+    assert all(map(isiter, (dict(), list(), set(), str(), tuple())))
+    assert none(map(isiter, (bool(), complex(), float(), int())))
+
+    # isnonstriter: is it a non-str iterable?
+    assert all(map(isnonstriter, (dict(), list(), set(), tuple())))
+    assert none(map(isnonstriter, (bool(), complex(), float(), int(), str())))
+
     # is_na is both singular and multiple,
     # NA is not None
+    assert_error(is_na, TypeError)
     assert_eq(is_na(NA), True)
     assert_eq(is_na(None), False)
     assert_identical(is_na(c(NA, None)), c(True, False))
@@ -171,16 +197,21 @@ if __name__ == "__main__":
     # is_none is both singular and multiple,
     # None is not NA,
     # this is a little different than is.null in R
+    assert_error(is_none, TypeError)
     assert_eq(is_none(None), True)
     assert_eq(is_none(NA), False)
     assert_identical(is_none(c(None, NA)), c(True, False))
 
-    "identical",
-    "is_na",
-    "isiter",
-    "isnonstriter",
-    "NA",
+    # rep can repeat a vector
+    assert_is(rep(), None)
+    assert_identical(rep(0, 2), c(0, 0))
+    assert_identical(rep("hi", 2), c("hi", "hi"))
+    assert_identical(rep(v12), v12)
+    assert_identical(rep(v12, times=2), c(v12, v12))
+    assert_identical(rep(v12, times=2), rep(v12, 4, 4))
+    assert_identical(rep(v12, each=2), c(1, 1, 2, 2))
+    assert_identical(rep(v12, each=3, length_out=4), c(1, 1, 1, 2))
+
     "order",
     "rep",
     "seq",
-    "vector",
