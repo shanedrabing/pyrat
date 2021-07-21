@@ -24,8 +24,8 @@ __all__ = [
     "identical",
     "ifelse",
     "isiter",
-    "isna",
-    "isnone",
+    "is_na",
+    "is_none",
     "isnonstriter",
     "match",
     "mean",
@@ -51,6 +51,7 @@ import itertools
 import math
 import operator as op
 import re
+import statistics
 
 from pyrat.closure import catch, get, inv, nest, part
 
@@ -122,17 +123,26 @@ def isnonstriter(x):
     return isiter(x) and not isinstance(x, str)
 
 
-# FUNCTIONS (VECTOR MANIPULATION)
+# FUNCTIONS (STATISTICS)
 
 
 def sqrt(x):
-    return x ** (1 / 2)
+    if not isinstance(x, vector):
+        return math.sqrt(x)
+    return x.apply(catch(math.sqrt, TypeError, NA))
 
 
-def mean(x):
+def mean(x, na_rm=False):
     if not x:
         return NA
+    if na_rm:
+        x = x[~is_na(x)]
+    elif any(is_na(x)):
+        return NA
     return sum(x) / len(x)
+
+
+# FUNCTIONS (VECTOR MANIPULATION)
 
 
 def c(*itr):
@@ -140,15 +150,15 @@ def c(*itr):
     return vector(vec.astype(tuple).reduce(tuple.__add__, tuple()))
 
 
-def isna(x):
+def is_na(x):
     if isinstance(x, vector):
-        return x.apply(isna)
+        return x.apply(is_na)
     return _is_na_singular(x)
 
 
-def isnone(x):
+def is_none(x):
     if isinstance(x, vector):
-        return x.apply(isnone)
+        return x.apply(is_none)
     return _is_none_singular(x)
 
 
@@ -255,7 +265,7 @@ def unique(itr):
 def grepl(pattern, x):
     if not isinstance(pattern, re.Pattern):
         pattern = re.compile(pattern)
-    return ~isnone(x.apply(pattern.search))
+    return ~is_none(x.apply(pattern.search))
 
 
 def grep(pattern, x):
@@ -336,9 +346,10 @@ class vector(tuple):
             raise err
 
     def round(self, ndigits=None):
+        f = catch(round, TypeError, NA)
         if ndigits is None:
-            return vector(map(round, self))
-        return vector(map(round, self, (ndigits,) * len(self)))
+            return vector(map(f, self))
+        return vector(map(f, self, (ndigits,) * len(self)))
 
     def reduce(self, f, init=None):
         if init is None:

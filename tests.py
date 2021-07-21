@@ -192,20 +192,20 @@ if __name__ == "__main__":
     assert all(map(isnonstriter, (dict(), list(), set(), tuple())))
     assert none(map(isnonstriter, (bool(), complex(), float(), int(), str())))
 
-    # isna is both singular and multiple,
+    # is_na is both singular and multiple,
     # NA is not None
-    assert_error(isna, TypeError)
-    assert_eq(isna(NA), True)
-    assert_eq(isna(None), False)
-    assert_identical(isna(c(NA, None)), c(True, False))
+    assert_error(is_na, TypeError)
+    assert_eq(is_na(NA), True)
+    assert_eq(is_na(None), False)
+    assert_identical(is_na(c(NA, None)), c(True, False))
 
-    # isnone is both singular and multiple,
+    # is_none is both singular and multiple,
     # None is not NA,
     # this is a little different than is.null in R
-    assert_error(isnone, TypeError)
-    assert_eq(isnone(None), True)
-    assert_eq(isnone(NA), False)
-    assert_identical(isnone(c(None, NA)), c(True, False))
+    assert_error(is_none, TypeError)
+    assert_eq(is_none(None), True)
+    assert_eq(is_none(NA), False)
+    assert_identical(is_none(c(None, NA)), c(True, False))
 
     # rep can repeat a vector
     assert_is(rep(), None)
@@ -280,16 +280,6 @@ if __name__ == "__main__":
     assert_identical(unique(rep(v213, each=2)), v213)
     assert_identical(unique(c(1, NA, 1, NA, 2)), c(1, NA, 2))
 
-    # sqrt is a vectorized sqrt function
-    assert_error(sqrt, TypeError)
-    assert_eq(sqrt(4), 2)
-    assert_identical(sqrt(v123).round(6), (v123 ** (1 / 2)).round(6))
-
-    # mean (you know this one)
-    assert_error(mean, TypeError)
-    assert_identical(mean(c()), NA)
-    assert_identical(mean(c(1, 2)), 1.5)
-
     # grepl
     assert_error(grepl, TypeError)
     assert_identical(grepl(ptrn, vstr), c(False, True, True))
@@ -309,7 +299,17 @@ if __name__ == "__main__":
 
     # gextrall
     assert_error(gextrall, TypeError)
-    assert_identical(
-        gextrall(ptrn, vstr),
-        vector((c(), rep("a", 2), c("a")))
-    )
+    assert_identical(gextrall(ptrn, vstr), vector((c(), rep("a", 2), c("a"))))
+
+    # sqrt is a vectorized sqrt function
+    assert_error(sqrt, TypeError)
+    assert_eq(sqrt(4), 2)
+    assert_identical(sqrt(c(1, NA, 4)).round(), c(1, NA, 2))
+    assert_identical(sqrt(v123).round(6), (v123 ** (1 / 2)).round(6))
+
+    # mean (you know this one)
+    assert_error(mean, TypeError)
+    assert_identical(mean(c()), NA)
+    assert_identical(mean(c(1, 2)), 1.5)
+    assert_identical(mean(c(1, 2, NA)), NA)
+    assert_identical(mean(c(1, 2, NA), na_rm=True), 1.5)

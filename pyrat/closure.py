@@ -22,9 +22,9 @@ __all__ = [
 
 
 def catch(f, err, default=None):
-    def catchf(x):
+    def catchf(*x):
         try:
-            return f(x)
+            return f(*x)
         except err:
             return default
     return catchf
