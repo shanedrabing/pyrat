@@ -272,3 +272,19 @@ if __name__ == "__main__":
     assert_identical(which(True), c(0))
     assert_identical(which(v123 > 1), c(1, 2))
     assert_identical(which(c(True, NA, False, True)), c(0, 3))
+
+    # unique dedupes a vector
+    assert_error(which, TypeError)
+    assert_identical(unique(rep(v213, times=2)), v213)
+    assert_identical(unique(rep(v213, each=2)), v213)
+    assert_identical(unique(c(1, NA, 1, NA, 2)), c(1, NA, 2))
+
+    # sqrt is a vectorized sqrt function
+    assert_error(sqrt, TypeError)
+    assert_eq(sqrt(4), 2)
+    assert_identical(sqrt(v123).round(6), (v123 ** (1 / 2)).round(6))
+
+    # mean (you know this one)
+    assert_error(mean, TypeError)
+    assert_identical(mean(c()), NA)
+    assert_identical(mean(c(1, 2)), 1.5)

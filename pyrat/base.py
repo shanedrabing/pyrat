@@ -8,27 +8,30 @@ __email__ = "shane.drabing@gmail.com"
 
 __all__ = [
     "c",
+    "F",
     "identical",
+    "ifelse",
+    "Inf",
     "isiter",
     "isna",
     "isnone",
     "isnonstriter",
+    "match",
+    "mean",
     "NA",
+    "NaN",
     "order",
+    "paste",
     "rep",
     "seq",
     "sort",
-    "vector",
-    "paste",
-    "ifelse",
-    "match",
-    "which",
+    "sqrt",
+    "T",
     "unique",
+    "vector",
+    "which",
 ]
 
-
-"mean",
-"sqrt",
 
 # IMPORTS
 
@@ -58,10 +61,14 @@ class _NA:
         return False
 
 
-# CLASS INSTANCES (WEIRD)
+# PSEUDO-CONSTANTS
 
 
 NA = _NA()
+T = True
+F = False
+Inf = float("inf")
+NaN = float("nan")
 
 
 # FUNCTIONS (GENERAL)
@@ -107,6 +114,16 @@ def isnonstriter(x):
 
 
 # FUNCTIONS (VECTOR MANIPULATION)
+
+
+def sqrt(x):
+    return x ** (1 / 2)
+
+
+def mean(x):
+    if not x:
+        return NA
+    return sum(x) / len(x)
 
 
 def c(*itr):
@@ -217,6 +234,10 @@ def which(x):
     if not isinstance(x, vector):
         x = c(x)
     return vector(itertools.compress(range(len(x)), x))
+
+
+def unique(itr):
+    return vector(dict.fromkeys(itr))
 
 
 # FUNCTIONS (VECTOR LOADING)
