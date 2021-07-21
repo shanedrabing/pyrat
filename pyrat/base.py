@@ -7,26 +7,29 @@ __email__ = "shane.drabing@gmail.com"
 
 
 __all__ = [
-    "c",
+    # constants
     "F",
+    "Inf",
+    "NA",
+    "NaN",
+    "T",
+
+    # functions
+    "c",
     "identical",
     "ifelse",
-    "Inf",
     "isiter",
     "isna",
     "isnone",
     "isnonstriter",
     "match",
     "mean",
-    "NA",
-    "NaN",
     "order",
     "paste",
     "rep",
     "seq",
     "sort",
     "sqrt",
-    "T",
     "unique",
     "vector",
     "which",
