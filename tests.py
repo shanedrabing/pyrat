@@ -231,3 +231,25 @@ if __name__ == "__main__":
     assert_is(order(), None)
     assert_identical(order(v213), c(1, 0, 2))
     assert_identical(v213[order(v213)], sort(v213))
+
+    # paste is useful for joining str vectors...
+    assert_identical(paste(), vector())
+    assert_identical(paste(0), c("0"))
+    assert_identical(paste(0, 1), c("0 1"))
+    assert_identical(paste(c(0, 1)), c("0", "1"))
+    assert_identical(paste(0, c(1, 1)), c("0 1", "0 1"))
+
+    # ...use the collapse argument to return a str
+    assert_identical(paste(collapse="."), "")
+    assert_identical(paste(0, 1, collapse="."), "0 1")
+    assert_identical(paste(c(0, 1), collapse="."), "0.1")
+    assert_identical(paste(0, c(1, 1), collapse="."), "0 1.0 1")
+
+    "paste",
+    "ifelse",
+    "match",
+    "which",
+    "unique",
+
+    "mean",
+    "sqrt",

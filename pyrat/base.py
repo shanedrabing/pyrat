@@ -19,6 +19,7 @@ __all__ = [
     "seq",
     "sort",
     "vector",
+    "paste"
 ]
 
 
@@ -55,6 +56,14 @@ def _repeat(x):
     if isnonstriter(x):
         itr = itertools.chain.from_iterable(itr)
     return itr
+
+
+def _repeat_many(itr):
+    try:
+        maxlen = max(map(len, itr))
+    except ValueError:
+        return tuple()
+    return tuple(itertools.islice(_repeat(x), maxlen) for x in itr)
 
 
 def isiter(x):
@@ -142,6 +151,17 @@ def order(itr=None, key=None, reverse=False):
     srt = sorted(enumerate(itr), key=nest(get(1), key), reverse=reverse)
     ind, _ = zip(*srt)
     return vector(ind)
+
+
+def paste(*args, sep=" ", collapse=None):
+    vecs = tuple(
+        (x if isinstance(x, vector) else c(x)).astype(str)
+        for x in args
+    )
+    vec = vector(map(sep.join, zip(*_repeat_many(vecs))))
+    if isinstance(collapse, str):
+        return collapse.join(vec)
+    return vec
 
 
 # FUNCTIONS (VECTOR LOADING)
