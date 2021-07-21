@@ -245,8 +245,12 @@ if __name__ == "__main__":
     assert_identical(paste(c(0, 1), collapse="."), "0.1")
     assert_identical(paste(0, c(1, 1), collapse="."), "0 1.0 1")
 
-    "paste",
-    "ifelse",
+    # ifelse works along a vector
+    assert_error(ifelse, TypeError)
+    assert_identical(v123 > 1, c(False, True, True))
+    assert_identical(ifelse(v123 > 1, v123, NA), c(NA, 2, 3))
+    assert_identical(ifelse(v123 > 1, 1, 0), c(0, 1, 1))
+
     "match",
     "which",
     "unique",

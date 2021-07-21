@@ -19,7 +19,8 @@ __all__ = [
     "seq",
     "sort",
     "vector",
-    "paste"
+    "paste",
+    "ifelse",
 ]
 
 
@@ -64,6 +65,10 @@ def _repeat_many(itr):
     except ValueError:
         return tuple()
     return tuple(itertools.islice(_repeat(x), maxlen) for x in itr)
+
+
+def _ifelse_singular(test, yes, no):
+    return yes if test else no
 
 
 def isiter(x):
@@ -162,6 +167,10 @@ def paste(*args, sep=" ", collapse=None):
     if isinstance(collapse, str):
         return collapse.join(vec)
     return vec
+
+
+def ifelse(test, yes, no):
+    return vector(map(_ifelse_singular, test, _repeat(yes), _repeat(no)))
 
 
 # FUNCTIONS (VECTOR LOADING)
