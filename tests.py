@@ -324,3 +324,32 @@ if __name__ == "__main__":
     assert_eq(rmax(1, c(NA, 2)), NA)
     assert_eq(rmax(1, NA, 2, na_rm=True), 2)
 
+    # exp
+    assert_error(exp, TypeError)
+    assert_eq(exp(0), 1)
+    assert_identical(exp(c(0, NA)).astype(int), c(1, NA))
+
+    # log
+    assert_error(log, TypeError)
+    assert_eq(log(1), 0)
+    assert_identical(log(c(1, NA)).astype(int), c(0, NA))
+
+    # sin, cos, tan, asin, acos, atan
+    assert_error(sin, TypeError)
+    assert_error(cos, TypeError)
+    assert_error(tan, TypeError)
+    assert_error(asin, TypeError)
+    assert_error(acos, TypeError)
+    assert_error(atan, TypeError)
+    assert_eq(sin(0), 0)
+    assert_eq(cos(0), 1)
+    assert_eq(tan(0), 0)
+    assert_eq(asin(0), 0)
+    assert_eq(acos(1), 0)
+    assert_eq(atan(0), 0)
+    assert_identical(sin(c(0, NA)), c(0.0, NA))
+    assert_identical(cos(c(0, NA)), c(1.0, NA))
+    assert_identical(tan(c(0, NA)), c(0.0, NA))
+    assert_identical(asin(c(0, NA)), c(0.0, NA))
+    assert_identical(acos(c(1, NA)), c(0.0, NA))
+    assert_identical(atan(c(0, NA)), c(0.0, NA))

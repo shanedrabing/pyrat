@@ -40,6 +40,14 @@ __all__ = [
     "which",
     "rmin",
     "rmax",
+    "log",
+    "exp",
+    "sin",
+    "cos",
+    "tan",
+    "asin",
+    "acos",
+    "atan",
 ]
 
 
@@ -128,10 +136,48 @@ def isnonstriter(x):
 # FUNCTIONS (STATISTICS)
 
 
-def sqrt(x):
+def _stat(f, x):
     if not isinstance(x, vector):
-        return math.sqrt(x)
-    return x.apply(catch(math.sqrt, TypeError, NA))
+        return f(x)
+    return x.apply(catch(f, TypeError, NA))
+
+
+def sqrt(x):
+    return _stat(math.sqrt, x)
+
+
+def exp(x):
+    return _stat(math.exp, x)
+
+
+def sin(x):
+    return _stat(math.sin, x)
+
+
+def cos(x):
+    return _stat(math.cos, x)
+
+
+def tan(x):
+    return _stat(math.tan, x)
+
+
+def asin(x):
+    return _stat(math.asin, x)
+
+
+def acos(x):
+    return _stat(math.acos, x)
+
+
+def atan(x):
+    return _stat(math.atan, x)
+
+
+def log(x, base=math.exp(1)):
+    if not isinstance(x, vector):
+        return math.log(x, base)
+    return x.apply(catch(part(math.log, base), TypeError, NA))
 
 
 def rmin(*x, na_rm=False):
@@ -394,15 +440,18 @@ class vector(tuple):
         return self.apply(t)
 
     def apply(self, f, *args):
+        f = catch(f, TypeError, NA)
         return vector(map(f, self, *args))
 
     def thread(self, f, *args):
+        f = catch(f, TypeError, NA)
         with concurrent.futures.ThreadPoolExecutor() as exe:
             return vector(exe.map(f, self, *args))
 
     def proc(self, f, *args):
         if f.__name__ == "<lambda>":
             raise Exception("can't use a lambda here")
+        f = catch(f, TypeError, NA)
         with concurrent.futures.ProcessPoolExecutor() as exe:
             return vector(exe.map(f, self, *args))
 
