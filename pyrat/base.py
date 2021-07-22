@@ -134,13 +134,6 @@ def isnonstriter(x):
     return isiter(x) and not isinstance(x, str)
 
 
-def na_safe(f, err=TypeError, default=NA):
-    f = catch(f, err, default)
-    def na_safef(*x):
-        return f(*x)
-    return na_safef
-
-
 # FUNCTIONS (STATISTICS)
 
 
@@ -238,6 +231,13 @@ def is_none(x):
     if isinstance(x, vector):
         return x.apply(is_none)
     return _is_none_singular(x)
+
+
+def na_safe(f, err=TypeError, default=NA):
+    f = catch(f, err, default)
+    def na_safef(*x):
+        return f(*x)
+    return na_safef
 
 
 def identical(x, y):
