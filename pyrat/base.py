@@ -35,6 +35,7 @@ __all__ = [
     "log",
     "match",
     "mean",
+    "na_safe",
     "order",
     "paste",
     "rep",
@@ -133,13 +134,20 @@ def isnonstriter(x):
     return isiter(x) and not isinstance(x, str)
 
 
+def na_safe(f, err=TypeError, default=NA):
+    f = catch(f, err, default)
+    def na_safef(*x):
+        return f(*x)
+    return na_safef
+
+
 # FUNCTIONS (STATISTICS)
 
 
 def _stat(f, x):
     if not isinstance(x, vector):
         return f(x)
-    return x.apply(catch(f, TypeError, NA))
+    return x.apply(na_safe(f))
 
 
 def sqrt(x):
@@ -177,7 +185,7 @@ def atan(x):
 def log(x, base=math.exp(1)):
     if not isinstance(x, vector):
         return math.log(x, base)
-    return x.apply(catch(part(math.log, base), TypeError, NA))
+    return x.apply(na_safe(part(math.log, base)))
 
 
 def rmin(*x, na_rm=False):
@@ -353,7 +361,7 @@ def gsub(pattern, repl, x, count=None):
 def gextr(pattern, x):
     if not isinstance(pattern, re.Pattern):
         pattern = re.compile(pattern)
-    return x.pipe(pattern.search, catch(re.Match.group, TypeError, NA))
+    return x.pipe(pattern.search, na_safe(re.Match.group))
 
 
 def gextrall(pattern, x):
@@ -416,7 +424,7 @@ class vector(tuple):
             raise err
 
     def round(self, ndigits=None):
-        f = catch(round, TypeError, NA)
+        f = na_safe(round)
         if ndigits is None:
             return vector(map(f, self))
         return vector(map(f, self, (ndigits,) * len(self)))
@@ -440,18 +448,18 @@ class vector(tuple):
         return self.apply(t)
 
     def apply(self, f, *args):
-        f = catch(f, TypeError, NA)
+        f = na_safe(f)
         return vector(map(f, self, *args))
 
     def thread(self, f, *args):
-        f = catch(f, TypeError, NA)
+        f = na_safe(f)
         with concurrent.futures.ThreadPoolExecutor() as exe:
             return vector(exe.map(f, self, *args))
 
     def proc(self, f, *args):
         if f.__name__ == "<lambda>":
             raise Exception("can't use a lambda here")
-        f = catch(f, TypeError, NA)
+        f = na_safe(f)
         with concurrent.futures.ProcessPoolExecutor() as exe:
             return vector(exe.map(f, self, *args))
 

@@ -179,6 +179,9 @@ if __name__ == "__main__":
 
     # BASE TESTS
 
+    # na_safe makes a function safe to use with NAs
+    assert_eq(na_safe(round)(NA), NA)
+
     # c(ombine) will make new vectors,
     # or flatten vectors for concatenation
     assert_identical(c(), vector())
