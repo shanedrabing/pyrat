@@ -8,8 +8,8 @@ __email__ = "shane.drabing@gmail.com"
 
 __all__ = [
     "assert_eq",
-    "assert_is",
     "assert_identical",
+    "assert_is",
     "assert_not_identical",
     "none",
 ]
