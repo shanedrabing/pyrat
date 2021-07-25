@@ -338,22 +338,32 @@ if __name__ == "__main__":
     assert_eq(log(1), 0)
     assert_identical(log(c(1, NA)).astype(int), c(0, NA))
 
-    # sin, cos, tan, asin, acos, atan
+    # sin
     assert_error(sin, TypeError)
     assert_eq(sin(0), 0)
     assert_identical(sin(c(0, NA)), c(0.0, NA))
+    
+    # tan
     assert_error(tan, TypeError)
     assert_eq(tan(0), 0)
-    assert_identical(cos(c(0, NA)), c(1.0, NA))
-    assert_error(acos, TypeError)
-    assert_eq(acos(1), 0)
     assert_identical(tan(c(0, NA)), c(0.0, NA))
+    
+    # cos
     assert_error(cos, TypeError)
     assert_eq(cos(0), 1)
-    assert_identical(asin(c(0, NA)), c(0.0, NA))
+    assert_identical(cos(c(0, NA)), c(1.0, NA))
+    
+    # acos
+    assert_error(acos, TypeError)
+    assert_eq(acos(1), 0)
+    assert_identical(acos(c(1, NA)), c(0.0, NA))
+    
+    # asin
     assert_error(asin, TypeError)
     assert_eq(asin(0), 0)
-    assert_identical(acos(c(1, NA)), c(0.0, NA))
+    assert_identical(asin(c(0, NA)), c(0.0, NA))
+    
+    # atan
     assert_error(atan, TypeError)
     assert_eq(atan(0), 0)
     assert_identical(atan(c(0, NA)), c(0.0, NA))
@@ -387,8 +397,8 @@ if __name__ == "__main__":
     assert_error(dev, TypeError)
     assert_identical(dev(v123).astype(int), c(-1, 0, 1))
     assert_identical(dev(v123, median).astype(int), c(-1, 0, 1))
-    assert_eq(ss(c(1, 2, NA)), NA)
-    assert_eq(ss(c(1, 2, NA), na_rm=True), 5)
+    assert_identical(dev(c(1, 2, 3, NA)), NA)
+    assert_identical(dev(c(1, 2, 3, NA), na_rm=True), c(-1.0, 0.0, 1.0))
 
     # var(iance)
     assert_error(var, TypeError)
@@ -396,15 +406,30 @@ if __name__ == "__main__":
     assert_eq(var(c(0)), NA)
     assert_eq(var(v123), 1)
     assert_eq(var(v123, v213), 0.5)
-    assert_eq(ss(c(1, 2, NA)), NA)
-    assert_eq(ss(c(1, 2, NA), na_rm=True), 5)
+    assert_eq(var(c(1, 2, NA)), NA)
+    assert_eq(var(c(1, 2, NA), na_rm=True), 0.5)
     assert_error(lambda: var(v123, v12), ValueError)
+
+    # sd, standard deviation
+    assert_error(sd, TypeError)
+    assert_eq(sd(0), NA)
+    assert_eq(sd(v123), 1)
+    assert_eq(sd(c(1, 2, 3, NA)), NA)
+    assert_eq(sd(c(1, 2, 3, NA), na_rm=True), 1)
 
     # cov(ariance)
     assert_error(cov, TypeError)
-    assert_eq(var(0), NA)
-    assert_eq(var(c(0)), NA)
-    assert_eq(var(v123), 1)
-    assert_eq(ss(c(1, 2, NA)), NA)
-    assert_eq(ss(c(1, 2, NA), na_rm=True), 5)
+    assert_eq(cov(0), NA)
+    assert_eq(cov(c(0)), NA)
+    assert_eq(cov(v123), 1)
+    assert_eq(cov(v123, v213), 0.5)
+    assert_eq(cov(c(1, 2, NA)), NA)
+    assert_eq(cov(c(1, 2, NA), na_rm=True), 0.5)
     assert_error(lambda: cov(v123, v12), ValueError)
+
+    # cor(relation)
+    assert_error(cor, TypeError)
+    assert_eq(cor(v123, v123), 1)
+    assert_eq(cor(v123, v213), 0.5)
+    assert_eq(cor(v123, c(1, 2, 3, NA)), NA)
+    assert_eq(cor(v123, c(1, 2, 3, NA), na_rm=True), 1)

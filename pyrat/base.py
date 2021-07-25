@@ -191,7 +191,7 @@ def rmin(*x, na_rm=False):
     if not x:
         return Inf
     if na_rm:
-        x = x[~is_na(x)]
+        x = x.filter(inv(is_na))
     elif any(is_na(x)):
         return NA
     return min(x)
@@ -202,7 +202,7 @@ def rmax(*x, na_rm=False):
     if not x:
         return -Inf
     if na_rm:
-        x = x[~is_na(x)]
+        x = x.filter(inv(is_na))
     elif any(is_na(x)):
         return NA
     return max(x)
@@ -214,7 +214,7 @@ def mean(x, na_rm=False):
     if not isvector(x):
         x = c(x)
     if na_rm:
-        x = x[~is_na(x)]
+        x = x.filter(inv(is_na))
     elif any(is_na(x)):
         return NA
     return sum(x) / len(x)
@@ -329,7 +329,7 @@ def ifelse(test, yes, no):
 def match(x, table, nomatch=NA):
     if not isvector(x):
         x = c(x)
-    if not isinstance(table, vector):
+    if not isvector(table):
         table = c(table)
     return vector(x).apply(catch(table.index, ValueError, nomatch))
 

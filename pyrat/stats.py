@@ -1,19 +1,20 @@
 __all__ = [
+    "sd",
     "cov",
     "dev",
     "median",
     "na_omit",
     "ss",
     "var",
+    "cor"
 ]
 
 
 # IMPORTS
 
 
-import statistics
-from pyrat.base import mean, sqrt, is_na, vector, c, NA, isvector, sort
-from pyrat.closure import inv
+from pyrat.base import NA, c, is_na, isvector, mean, na_safe, sqrt
+from pyrat.closure import inv, part
 
 
 # FUNCTIONS
@@ -22,7 +23,7 @@ from pyrat.closure import inv
 def na_omit(x):
     if not isvector(x):
         x = c(x)
-    return x[~is_na(x)]
+    return x.filter(inv(is_na))
 
 
 def median(x, na_rm=False):
@@ -32,7 +33,7 @@ def median(x, na_rm=False):
         x = na_omit(x)
     elif any(is_na(x)):
         return NA
-    srt = sort(x)
+    srt = sorted(x)
     n = len(srt)
     i = n // 2
     if n % 2 == 0:
@@ -62,7 +63,7 @@ def dev(x, f=mean, na_rm=False):
 
 def var(x, y=None, na_rm=False):
     if y is not None:
-        return cov(x, y)
+        return cov(x, y, na_rm=na_rm)
     if not isvector(x):
         x = c(x)
     if na_rm:
@@ -74,9 +75,16 @@ def var(x, y=None, na_rm=False):
     return ss(dev(x)) / (len(x) - 1)
 
 
+def sd(x, na_rm=False):
+    v = var(x, na_rm=na_rm)
+    if is_na(v):
+        return v
+    return sqrt(v)
+
+
 def cov(x, y=None, na_rm=False):
     if y is None:
-        return var(x)
+        return var(x, na_rm=na_rm)
     if not isvector(x):
         x = c(x)
     if not isvector(y):
@@ -89,3 +97,16 @@ def cov(x, y=None, na_rm=False):
     if len(x) != len(y):
         raise ValueError("vector lengths unequal")
     return sum(dev(x) * dev(y)) / (len(x) - 1)
+
+
+def cor(x, y, na_rm=False):
+    if not isvector(x):
+        x = c(x)
+    if not isvector(y):
+        y = c(y)
+    if na_rm:
+        x = na_omit(x)
+        y = na_omit(y)
+    elif any(is_na(x)) or any(is_na(y)):
+        return NA
+    return cov(x, y) / (sd(x) * sd(y))
