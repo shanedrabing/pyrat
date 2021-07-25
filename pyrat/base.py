@@ -32,6 +32,7 @@ __all__ = [
     "is_none",
     "isiter",
     "isnonstriter",
+    "isvector",
     "log",
     "match",
     "mean",
@@ -134,11 +135,15 @@ def isnonstriter(x):
     return isiter(x) and not isinstance(x, str)
 
 
+def isvector(x):
+    return isinstance(x, vector)
+
+
 # FUNCTIONS (STATISTICS)
 
 
 def _stat(f, x):
-    if not isinstance(x, vector):
+    if not isvector(x):
         return f(x)
     return x.apply(na_safe(f))
 
@@ -176,7 +181,7 @@ def atan(x):
 
 
 def log(x, base=math.exp(1)):
-    if not isinstance(x, vector):
+    if not isvector(x):
         return math.log(x, base)
     return x.apply(na_safe(part(math.log, base)))
 
@@ -206,6 +211,8 @@ def rmax(*x, na_rm=False):
 def mean(x, na_rm=False):
     if not x:
         return NA
+    if not isvector(x):
+        x = c(x)
     if na_rm:
         x = x[~is_na(x)]
     elif any(is_na(x)):
@@ -222,13 +229,13 @@ def c(*itr):
 
 
 def is_na(x):
-    if isinstance(x, vector):
+    if isvector(x):
         return x.apply(is_na)
     return _is_na_singular(x)
 
 
 def is_none(x):
-    if isinstance(x, vector):
+    if isvector(x):
         return x.apply(is_none)
     return _is_none_singular(x)
 
@@ -306,7 +313,7 @@ def order(itr=None, key=None, reverse=False):
 
 def paste(*args, sep=" ", collapse=None):
     vecs = tuple(
-        (x if isinstance(x, vector) else c(x)).astype(str)
+        (x if isvector(x) else c(x)).astype(str)
         for x in args
     )
     vec = vector(map(sep.join, zip(*_repeat_many(vecs))))
@@ -320,7 +327,7 @@ def ifelse(test, yes, no):
 
 
 def match(x, table, nomatch=NA):
-    if not isinstance(x, vector):
+    if not isvector(x):
         x = c(x)
     if not isinstance(table, vector):
         table = c(table)
@@ -328,7 +335,7 @@ def match(x, table, nomatch=NA):
 
 
 def which(x):
-    if not isinstance(x, vector):
+    if not isvector(x):
         x = c(x)
     return vector(itertools.compress(range(len(x)), x))
 
@@ -380,6 +387,7 @@ def _nanot(x):
 
 
 def _operate(f, flip=False, singular=False):
+    f = na_safe(f)
     if singular:
         def operatef(self):
             return vector(map(f, self))

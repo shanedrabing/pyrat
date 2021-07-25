@@ -359,13 +359,45 @@ if __name__ == "__main__":
     assert_identical(atan(c(0, NA)), c(0.0, NA))
 
     # STATS TESTS
-    
+
+    # na_omit
+    assert_error(na_omit, TypeError)
+    assert_identical(na_omit(0), c(0))
+    assert_identical(na_omit(NA), c())
+    assert_identical(na_omit(c(1, 2, NA)), v12)
+
+    # median
+    assert_error(median, TypeError)
+    assert_identical(median(0), 0)
+    assert_identical(median(NA), NA)
+    assert_identical(median(v12), 1.5)
+    assert_identical(median(v123), 2)
+    assert_identical(median(c(1, 2, NA)), NA)
+    assert_identical(median(c(1, 2, NA), na_rm=True), 1.5)
+
+    # ss, sum of squares
+    assert_error(ss, TypeError)
+    assert_eq(ss(0), 0)
+    assert_eq(ss(c(0)), 0)
+    assert_eq(ss(v123), 14)
+    assert_eq(ss(c(1, 2, NA)), NA)
+    assert_eq(ss(c(1, 2, NA), na_rm=True), 5)
+
+    # dev(iance)
+    assert_error(dev, TypeError)
+    assert_identical(dev(v123).astype(int), c(-1, 0, 1))
+    assert_identical(dev(v123, median).astype(int), c(-1, 0, 1))
+    assert_eq(ss(c(1, 2, NA)), NA)
+    assert_eq(ss(c(1, 2, NA), na_rm=True), 5)
+
     # var(iance)
     assert_error(var, TypeError)
     assert_eq(var(0), NA)
     assert_eq(var(c(0)), NA)
     assert_eq(var(v123), 1)
     assert_eq(var(v123, v213), 0.5)
+    assert_eq(ss(c(1, 2, NA)), NA)
+    assert_eq(ss(c(1, 2, NA), na_rm=True), 5)
     assert_error(lambda: var(v123, v12), ValueError)
 
     # cov(ariance)
@@ -373,4 +405,6 @@ if __name__ == "__main__":
     assert_eq(var(0), NA)
     assert_eq(var(c(0)), NA)
     assert_eq(var(v123), 1)
+    assert_eq(ss(c(1, 2, NA)), NA)
+    assert_eq(ss(c(1, 2, NA), na_rm=True), 5)
     assert_error(lambda: cov(v123, v12), ValueError)
