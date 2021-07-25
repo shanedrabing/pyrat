@@ -65,6 +65,7 @@ if __name__ == "__main__":
 
     from pyrat.base import *
     from pyrat.closure import *
+    from pyrat.stats import *
 
     # VARIABLES
 
@@ -356,3 +357,7 @@ if __name__ == "__main__":
     assert_identical(asin(c(0, NA)), c(0.0, NA))
     assert_identical(acos(c(1, NA)), c(0.0, NA))
     assert_identical(atan(c(0, NA)), c(0.0, NA))
+
+    # STATS TESTS
+    
+    
