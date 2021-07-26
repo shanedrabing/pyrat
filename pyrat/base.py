@@ -486,20 +486,24 @@ class vector(tuple):
     def transform(self, f, *args, **kwargs):
         return f(self, *args, **kwargs)
 
-    def apply(self, f, *args):
-        return vector(map(na_safe(f), self, *args))
-
-    def apply_partial(self, f, *args, **kwargs):
+    def apply(self, f, *args, **kwargs):
         return vector(map(na_safe(part(f, *args, **kwargs)), self))
 
-    def thread(self, f, *args):
+    def apply_map(self, f, *args):
+        return vector(map(na_safe(f), self, *args))
+
+    def thread(self, f, *args, **kwargs):
+        with concurrent.futures.ThreadPoolExecutor() as exe:
+            return vector(exe.map(na_safe(part(f, *args, **kwargs)), self))
+
+    def thread_map(self, f, *args):
         with concurrent.futures.ThreadPoolExecutor() as exe:
             return vector(exe.map(na_safe(f), self, *args))
 
-    def proc(self, f, *args):
-        # never NA safe!
+    def proc_map(self, f, *args):
         if f.__name__ == "<lambda>":
             raise Exception("can't use a lambda here")
+        # never NA safe!
         with concurrent.futures.ProcessPoolExecutor() as exe:
             return vector(exe.map(f, self, *args))
 

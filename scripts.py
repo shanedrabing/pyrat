@@ -60,14 +60,14 @@ if True and __name__ == "__main__":
         taxa
         .apply(wiki.format)
         .thread(requests.get)
-        .apply(gettr("content"))
-        .apply(part(bs4.BeautifulSoup, "lxml"))
-        .apply(part(bs4.BeautifulSoup.select_one, "h1"))
-        .apply(gettr("text"))
+        .apply(getattr, "content")
+        .apply(bs4.BeautifulSoup, "lxml")
+        .apply(bs4.BeautifulSoup.select_one, "h1")
+        .apply(getattr, "text")
     )
-    
+
     full = paste(common, "(" + taxa + ")", collapse="\n")
     end = time.time()
-    
+
     print(full)
     print(end - start, "seconds")

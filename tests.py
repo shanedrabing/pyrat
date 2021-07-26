@@ -161,14 +161,16 @@ if __name__ == "__main__":
 
     # different kinds of apply methods,
     # which can take multiple inputs
-    assert_identical(v123.apply(int.__mul__, v123), v123 * v123)
+    assert_identical(v123.apply_map(int.__mul__, v123), v123 * v123)
     assert all(v123.astype(str).apply(str.isdigit))
+    assert all(v123.astype(str).apply_map(str.isdigit))
     assert all(v123.astype(str).thread(str.isdigit))
-    # assert all(v123.astype(str).proc(str.isdigit))
+    assert all(v123.astype(str).thread_map(str.isdigit))
+    # assert all(v123.astype(str).proc_map(str.isdigit))
 
     # apply partial function
     assert_identical(
-        vstr.apply_partial(str.split, " "),
+        vstr.apply(str.split, " "),
         vector((["python"], ["a", "rat"], ["pirate"]))
     )
 
@@ -176,7 +178,7 @@ if __name__ == "__main__":
     tmp = (
         v123
         .astype(str)
-        .apply(str.replace, v123.astype(str), v213.astype(str))
+        .apply_map(str.replace, v123.astype(str), v213.astype(str))
         .astype(int)
     )
     assert_identical(tmp, v213)
