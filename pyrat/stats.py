@@ -1,12 +1,13 @@
 __all__ = [
-    "sd",
+    "cor",
     "cov",
     "dev",
+    "mad",
     "median",
     "na_omit",
+    "sd",
     "ss",
     "var",
-    "cor"
 ]
 
 
@@ -110,3 +111,13 @@ def cor(x, y, na_rm=False):
     elif any(is_na(x)) or any(is_na(y)):
         return NA
     return cov(x, y) / (sd(x) * sd(y))
+
+
+def mad(x, f=median, constant=1.4826, na_rm=False):
+    if not isvector(x):
+        x = c(x)
+    if na_rm:
+        x = na_omit(x)
+    elif any(is_na(x)):
+        return NA
+    return constant * f(abs(dev(x, f=f, na_rm=na_rm)))

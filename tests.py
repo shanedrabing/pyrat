@@ -433,3 +433,12 @@ if __name__ == "__main__":
     assert_eq(cor(v123, v213), 0.5)
     assert_eq(cor(v123, c(1, 2, 3, NA)), NA)
     assert_eq(cor(v123, c(1, 2, 3, NA), na_rm=True), 1)
+
+    # mad, mean absolute deviation
+    assert_error(mad, TypeError)
+    assert_eq(mad(0), 0)
+    assert_eq(mad(NA), NA)
+    assert_eq(mad(v123), 1.4826)
+    assert_eq(mad(v123, constant=1), 1)
+    assert_eq(mad(c(NA, v123)), NA)
+    assert_eq(mad(c(NA, v123), na_rm=True), 1.4826)
