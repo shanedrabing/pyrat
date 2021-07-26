@@ -1,14 +1,16 @@
 # LINEAR MODELING
 
 
-if False and __name__ == "__main__":
-    import math
+if True and __name__ == "__main__":
+    import time
 
     import matplotlib.pyplot as plt
 
-    from pyrat.base import match, order, seq, sort, unique
-    from pyrat.stats import lm, predict, rmse
+    from pyrat.base import log10, match, mean, order, seq, sort, sqrt, unique
+    from pyrat.stats import lm, predict
     from pyrat.utils import read_csv, struct
+
+    start = time.time()
 
     df = read_csv("data/mtcars.csv")
     struct(df)
@@ -16,47 +18,53 @@ if False and __name__ == "__main__":
     x = df["hp"]
     y = df["mpg"]
 
-    x_log10 = x.apply(math.log10)
-    y_log10 = y.apply(math.log10)
+    x_log10 = log10(x)
+    y_log10 = log10(y)
 
     m = lm(x_log10, y_log10)
     y_fit_log10 = predict(m, x_log10)
     y_fit = 10 ** y_fit_log10
 
-    e = rmse(y, y_fit)
+    e = sqrt(mean((y_fit - y) ** 2))
     i = order(x)
 
     x_new = seq(min(x), max(x), length_out=101)
-    y_new_log10 = predict(m, x_new.apply(math.log10))
+    y_new_log10 = predict(m, log10(x_new))
     y_new = 10 ** y_new_log10
+
+    end = time.time()
+    print(end - start, "seconds")
 
     plt.scatter(x, y, color="black")
     plt.plot(x_new, y_new, color="red")
     plt.xlabel("Horsepower")
     plt.ylabel("Miles per Gallon")
     plt.tight_layout()
-    # plt.savefig("data/lm.png")
-    plt.show()
+    plt.savefig("data/fit.png")
     plt.clf()
+
+    end = time.time()
+    print(end - start, "seconds")
 
 
 # PYTHON FUNCTIONAL PROGRAMMING
 
 
 if True and __name__ == "__main__":
-    import bs4
     import time
+
+    import bs4
     import requests
 
     from pyrat.base import c, paste
     from pyrat.closure import gettr, part
 
+    start = time.time()
+
     wiki = "https://en.wikipedia.org/w/index.php?search={}"
     taxa = c("Canis lupus", "Felis catus", "Ursidae", "Anura (order)")
 
-    start = time.time()
-
-    common = (
+    out = (
         taxa
         .apply(wiki.format)
         .thread(requests.get)
@@ -64,10 +72,10 @@ if True and __name__ == "__main__":
         .apply(bs4.BeautifulSoup, "lxml")
         .apply(bs4.BeautifulSoup.select_one, "h1")
         .apply(getattr, "text")
+        .transform(paste, "(" + taxa + ")", collapse="\n")
     )
 
-    full = paste(common, "(" + taxa + ")", collapse="\n")
     end = time.time()
 
-    print(full)
+    print(out)
     print(end - start, "seconds")

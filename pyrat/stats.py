@@ -14,7 +14,7 @@ __all__ = [
 # IMPORTS
 
 
-from pyrat.base import NA, c, is_na, isvector, mean, na_safe, sqrt, any_na
+from pyrat.base import NA, any_na, c, is_na, isvector, mean, na_safe, sqrt
 from pyrat.closure import inv, part
 
 
@@ -121,3 +121,18 @@ def mad(x, f=median, constant=1.4826, na_rm=False):
     elif any_na(x):
         return NA
     return constant * f(abs(dev(x, f=f, na_rm=na_rm)))
+
+
+# FUNCTIONS (MODELS)
+
+
+def lm(x, y):
+    x, y = map(c, (x, y))
+    coef = dict()
+    coef["b1"] = cov(x, y) / var(x)
+    coef["b0"] = mean(y) - coef["b1"] * mean(x)
+    return coef
+
+
+def predict(coef, x):
+    return coef["b0"] + x * coef["b1"]
