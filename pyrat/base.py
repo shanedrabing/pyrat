@@ -127,6 +127,14 @@ def _ifelse_singular(test, yes, no):
     return yes if test else no
 
 
+def _rlog(x, base):
+    if x == NaN or x < 0:
+        return NaN
+    elif x == 0:
+        return -Inf
+    return math.log(x, base)
+
+
 def isiter(x):
     return "__iter__" in dir(x)
 
@@ -182,8 +190,20 @@ def atan(x):
 
 def log(x, base=math.exp(1)):
     if not isvector(x):
-        return math.log(x, base)
-    return x.apply(na_safe(part(math.log, base)))
+        return _rlog(x, base)
+    return x.apply(na_safe(part(_rlog, base)))
+
+
+def log2(x):
+    return log(x, 2)
+
+
+def log10(x):
+    return log(x, base=10)
+
+
+def log1p(x):
+    return log(1 + x)
 
 
 def rmin(*x, na_rm=False):
