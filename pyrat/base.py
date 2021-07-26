@@ -16,6 +16,7 @@ __all__ = [
 
     # functions
     "acos",
+    "any_na",
     "asin",
     "atan",
     "c",
@@ -252,6 +253,10 @@ def is_na(x):
     if isvector(x):
         return x.apply(is_na)
     return _is_na_singular(x)
+
+
+def any_na(*x):
+    return any(is_na(c(x)))
 
 
 def is_none(x):

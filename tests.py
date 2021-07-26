@@ -203,6 +203,12 @@ if __name__ == "__main__":
     assert_eq(is_na(None), False)
     assert_identical(is_na(c(NA, None)), c(True, False))
 
+    # any_na is both singular and multiple,
+    assert_error(is_na, TypeError)
+    assert_eq(any_na(NA), True)
+    assert_eq(any_na(None), False)
+    assert_eq(any_na(c(NA, None)), True)
+
     # is_none is both singular and multiple,
     # None is not NA,
     # this is a little different than is.null in R

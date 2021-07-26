@@ -14,7 +14,7 @@ __all__ = [
 # IMPORTS
 
 
-from pyrat.base import NA, c, is_na, isvector, mean, na_safe, sqrt
+from pyrat.base import NA, c, is_na, isvector, mean, na_safe, sqrt, any_na
 from pyrat.closure import inv, part
 
 
@@ -32,7 +32,7 @@ def median(x, na_rm=False):
         x = c(x)
     if na_rm:
         x = na_omit(x)
-    elif any(is_na(x)):
+    elif any_na(x):
         return NA
     srt = sorted(x)
     n = len(srt)
@@ -47,7 +47,7 @@ def ss(x, na_rm=False):
         x = c(x)
     if na_rm:
         x = na_omit(x)
-    elif any(is_na(x)):
+    elif any_na(x):
         return NA
     return sum(x ** 2)
 
@@ -57,7 +57,7 @@ def dev(x, f=mean, na_rm=False):
         x = c(x)
     if na_rm:
         x = na_omit(x)
-    elif any(is_na(x)):
+    elif any_na(x):
         return NA
     return x - f(x)
 
@@ -69,7 +69,7 @@ def var(x, y=None, na_rm=False):
         x = c(x)
     if na_rm:
         x = na_omit(x)
-    elif any(is_na(x)):
+    elif any_na(x):
         return NA
     if len(x) <= 1:
         return NA
@@ -93,7 +93,7 @@ def cov(x, y=None, na_rm=False):
     if na_rm:
         x = na_omit(x)
         y = na_omit(y)
-    elif any(is_na(x)) or any(is_na(y)):
+    elif any_na(x, y):
         return NA
     if len(x) != len(y):
         raise ValueError("vector lengths unequal")
@@ -108,7 +108,7 @@ def cor(x, y, na_rm=False):
     if na_rm:
         x = na_omit(x)
         y = na_omit(y)
-    elif any(is_na(x)) or any(is_na(y)):
+    elif any_na(x, y):
         return NA
     return cov(x, y) / (sd(x) * sd(y))
 
@@ -118,6 +118,6 @@ def mad(x, f=median, constant=1.4826, na_rm=False):
         x = c(x)
     if na_rm:
         x = na_omit(x)
-    elif any(is_na(x)):
+    elif any_na(x):
         return NA
     return constant * f(abs(dev(x, f=f, na_rm=na_rm)))
