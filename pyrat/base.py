@@ -470,6 +470,9 @@ class vector(tuple):
     def accumulate(self, f):
         return vector(itertools.accumulate(self, f))
 
+    def sort(self, key=None, reverse=False):
+        return vector(sorted(self, key=key, reverse=reverse))
+
     def filter(self, f, invert=False):
         if invert:
             return vector(filter(inv(f), self))
@@ -480,29 +483,31 @@ class vector(tuple):
             raise Exception("use vector.apply for functions")
         return self.apply(t)
 
+    def transform(self, f, *args, **kwargs):
+        return f(self, *args, **kwargs)
+
     def apply(self, f, *args):
-        f = na_safe(f)
-        return vector(map(f, self, *args))
+        return vector(map(na_safe(f), self, *args))
+
+    def apply_partial(self, f, *args, **kwargs):
+        return vector(map(na_safe(part(f, *args, **kwargs)), self))
 
     def thread(self, f, *args):
-        f = na_safe(f)
         with concurrent.futures.ThreadPoolExecutor() as exe:
-            return vector(exe.map(f, self, *args))
+            return vector(exe.map(na_safe(f), self, *args))
 
     def proc(self, f, *args):
+        # never NA safe!
         if f.__name__ == "<lambda>":
             raise Exception("can't use a lambda here")
-        f = na_safe(f)
         with concurrent.futures.ProcessPoolExecutor() as exe:
             return vector(exe.map(f, self, *args))
 
     def tapply(self, index, f):
         rng = seq(0, len(self))
-        i = order(index)
-        return {
-            k: f(self[v])
-            for k, v in itertools.groupby(rng[i], index.__getitem__)
-        }
+        ind = order(index)
+        grp = itertools.groupby(rng[ind], index.__getitem__)
+        return {k: f(self[v]) for k, v in grp}
 
     def pipe(self, *fs):
         x = self

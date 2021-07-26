@@ -155,12 +155,22 @@ if __name__ == "__main__":
     assert_eq(v123.tapply(v123 % 2 == 0, c), {False: c(1, 3), True: c(2)})
     assert_identical(v123.astype(str), c("1", "2", "3"))
 
+    # transform works on the whole vector
+    assert_identical(v213.transform(sort), v123)
+    assert_identical(v213.sort(), v123)
+
     # different kinds of apply methods,
     # which can take multiple inputs
     assert_identical(v123.apply(int.__mul__, v123), v123 * v123)
     assert all(v123.astype(str).apply(str.isdigit))
     assert all(v123.astype(str).thread(str.isdigit))
     # assert all(v123.astype(str).proc(str.isdigit))
+
+    # apply partial function
+    assert_identical(
+        vstr.apply_partial(str.split, " "),
+        vector((["python"], ["a", "rat"], ["pirate"]))
+    )
 
     # a ridiculuous example
     tmp = (
@@ -440,7 +450,7 @@ if __name__ == "__main__":
     assert_eq(cor(v123, c(1, 2, 3, NA)), NA)
     assert_eq(cor(v123, c(1, 2, 3, NA), na_rm=True), 1)
 
-    # mad, mean absolute deviation
+    # mad, median absolute deviation
     assert_error(mad, TypeError)
     assert_eq(mad(0), 0)
     assert_eq(mad(NA), NA)
