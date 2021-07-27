@@ -14,8 +14,8 @@ __all__ = [
 # IMPORTS
 
 
-from pyrat.base import NA, any_na, c, is_na, isvector, mean, na_safe, sqrt
-from pyrat.closure import inv, part
+from pyrat.base import NA, any_na, c, is_na, isvector, mean, sqrt
+from pyrat.closure import inv
 
 
 # FUNCTIONS
