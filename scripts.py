@@ -19,6 +19,7 @@ if False and __name__ == "__main__":
     y = df["mpg"]
 
     m = lm(log10(x), log10(y))
+    print(m)
 
     x_new = seq(min(x), max(x), length_out=101)
     y_new = 10 ** predict(m, log10(x_new))
@@ -38,7 +39,7 @@ if False and __name__ == "__main__":
 # DATA MANIPULATION
 
 
-if True and __name__ == "__main__":
+if False and __name__ == "__main__":
     import time
 
     from pyrat.base import order

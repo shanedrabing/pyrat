@@ -14,7 +14,7 @@ __all__ = [
 
 import csv
 
-from pyrat.base import c, isiter
+from pyrat.base import c, isiter, vector
 from pyrat.closure import get, unpack
 
 
@@ -88,7 +88,7 @@ def read_csv(filename):
     with open(filename, encoding="utf-8") as f:
         reader = csv.DictReader(f)
         return {
-            k: c(auto_cast(v))
+            k: vector(auto_cast(v))
             for k, v in _lod_to_dol(reader).items()
         }
 
@@ -103,7 +103,7 @@ def write_csv(x, filename):
 
 
 def struct(dct, echo=True):
-    k, v = map(c, zip(*dct.items()))
+    k, v = map(vector, zip(*dct.items()))
     k_pad = max(k.apply(len))
     keys = k.apply(str.rjust, k_pad)
 
@@ -113,7 +113,7 @@ def struct(dct, echo=True):
 
     peek = v.apply(lambda x: ", ".join(c(x[:10]).apply(str)))
 
-    rows = c(zip(keys, types, peek))
+    rows = vector(zip(keys, types, peek))
     out = "\n".join(rows.apply(unpack("{} : {}  {} ...".format)))
 
     if echo:
