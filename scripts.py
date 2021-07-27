@@ -1,12 +1,12 @@
 # LINEAR MODELING
 
 
-if True and __name__ == "__main__":
+if False and __name__ == "__main__":
     import time
 
     import matplotlib.pyplot as plt
 
-    from pyrat.base import log10, match, mean, order, seq, sort, sqrt, unique
+    from pyrat.base import log10, seq
     from pyrat.stats import lm, predict
     from pyrat.utils import read_csv, struct
 
@@ -18,22 +18,10 @@ if True and __name__ == "__main__":
     x = df["hp"]
     y = df["mpg"]
 
-    x_log10 = log10(x)
-    y_log10 = log10(y)
-
-    m = lm(x_log10, y_log10)
-    y_fit_log10 = predict(m, x_log10)
-    y_fit = 10 ** y_fit_log10
-
-    e = sqrt(mean((y_fit - y) ** 2))
-    i = order(x)
+    m = lm(log10(x), log10(y))
 
     x_new = seq(min(x), max(x), length_out=101)
-    y_new_log10 = predict(m, log10(x_new))
-    y_new = 10 ** y_new_log10
-
-    end = time.time()
-    print(end - start, "seconds")
+    y_new = 10 ** predict(m, log10(x_new))
 
     plt.scatter(x, y, color="black")
     plt.plot(x_new, y_new, color="red")
@@ -47,17 +35,40 @@ if True and __name__ == "__main__":
     print(end - start, "seconds")
 
 
-# PYTHON FUNCTIONAL PROGRAMMING
+# DATA MANIPULATION
 
 
 if True and __name__ == "__main__":
+    import time
+
+    from pyrat.base import order
+    from pyrat.stats import lm, predict
+    from pyrat.utils import read_csv, write_csv
+
+    start = time.time()
+
+    df = read_csv("data/mtcars.csv")
+
+    i = order(df["hp"])
+    b = df["cyl"] == 4
+    df = {k: v[i][b[i]] for k, v in df.items()}
+
+    write_csv(df, "data/mtcars_alt.csv")
+
+    end = time.time()
+    print(end - start, "seconds")
+
+
+# PYTHON FUNCTIONAL PROGRAMMING
+
+
+if False and __name__ == "__main__":
     import time
 
     import bs4
     import requests
 
     from pyrat.base import c, paste
-    from pyrat.closure import gettr, part
 
     start = time.time()
 

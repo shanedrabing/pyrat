@@ -5,6 +5,7 @@ __all__ = [
     "struct",
     "tail",
     "try_cast",
+    "write_csv",
 ]
 
 
@@ -55,6 +56,13 @@ def _lod_to_dol(itr):
     return dct
 
 
+def _dol_to_lod(dct):
+    return tuple(
+        dict(zip(dct.keys(), x))
+        for x in zip(*dct.values())
+    )
+
+
 def auto_cast(itr):
     x = itr[0]
     t = str
@@ -83,6 +91,15 @@ def read_csv(filename):
             k: vector(auto_cast(v))
             for k, v in _lod_to_dol(reader).items()
         }
+
+
+def write_csv(x, filename):
+    if not isinstance(x, dict):
+        raise TypeError("input must be a dict of iterables")
+    with open(filename, "w", encoding="utf-8", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=x.keys())
+        writer.writeheader()
+        writer.writerows(_dol_to_lod(x))
 
 
 def struct(dct, echo=True):
