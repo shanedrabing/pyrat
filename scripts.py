@@ -63,7 +63,7 @@ if False and __name__ == "__main__":
 # PYTHON FUNCTIONAL PROGRAMMING
 
 
-if False and __name__ == "__main__":
+if True and __name__ == "__main__":
     import time
 
     import bs4
@@ -73,12 +73,11 @@ if False and __name__ == "__main__":
 
     start = time.time()
 
-    wiki = "https://en.wikipedia.org/w/index.php?search={}"
     taxa = c("Canis lupus", "Felis catus", "Ursidae", "Anura (order)")
 
-    out = (
+    print(
         taxa
-        .apply(wiki.format)
+        .apply("https://en.wikipedia.org/w/index.php?search={}".format)
         .thread(requests.get)
         .apply(getattr, "content")
         .apply(bs4.BeautifulSoup, "lxml")
@@ -88,6 +87,4 @@ if False and __name__ == "__main__":
     )
 
     end = time.time()
-
-    print(out)
     print(end - start, "seconds")

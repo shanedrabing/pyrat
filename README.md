@@ -86,12 +86,11 @@ immutable, as the `vector` is just a `tuple` on steroids.
 ```python
 from pyrat.base import c, paste
 
-wiki = "https://en.wikipedia.org/w/index.php?search={}"
 taxa = c("Canis lupus", "Felis catus", "Ursidae", "Anura (order)")
 
-out = (
+print(
     taxa
-    .apply(wiki.format)
+    .apply("https://en.wikipedia.org/w/index.php?search={}".format)
     .thread(requests.get)
     .apply(getattr, "content")
     .apply(bs4.BeautifulSoup, "lxml")
@@ -99,11 +98,9 @@ out = (
     .apply(getattr, "text")
     .transform(paste, "(" + taxa + ")", collapse="\n")
 )
-
-print(out)
 ```
 
-Here's out output:
+Here's the output:
 
 ```txt
 Wolf (Canis lupus)
