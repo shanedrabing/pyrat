@@ -63,7 +63,7 @@ if False and __name__ == "__main__":
 # PYTHON FUNCTIONAL PROGRAMMING
 
 
-if True and __name__ == "__main__":
+if False and __name__ == "__main__":
     import time
 
     import bs4
@@ -88,3 +88,22 @@ if True and __name__ == "__main__":
 
     end = time.time()
     print(end - start, "seconds")
+
+
+# NUCLEOTIDE COUNT
+
+
+if True and __name__ == "__main__":
+    from pyrat.base import vector
+
+
+    def count_nucleotides(strand):
+        bases = vector("ACGT")
+        if set(strand) - set(bases):
+            return
+        return dict(zip(bases, bases.apply(strand.count)))
+
+
+    print(count_nucleotides("GATTACA"))
+    assert count_nucleotides("GATTACA") == {"A": 3, "C": 1, "G": 1, "T": 2}
+    assert count_nucleotides("INVALID") == None
