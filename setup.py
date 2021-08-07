@@ -4,7 +4,7 @@ with open("README.md", "r") as f:
     long_description = f.read()
 
 setuptools.setup(
-    name="pyrat",
+    name="pyrat-sdrabing",
     version="0.2.1",
     author="Shane Drabing",
     author_email="shane.drabing@gmail.com",
